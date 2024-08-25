@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Input UI</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input-container">
+            <label for="apiInput">API Input</label>
+            <input type="text" id="apiInput" placeholder='{"data":["M","1","334","4","B"]}' />
+            <button type="button" onclick="submit()">Submit</button>
+        </div>
+
+        <div class="filter-container">
+            <label for="filterSelect">Multi Filter</label>
+            <select id="filterSelect">
+                <option value="Numbers">Numbers</option>
+                <option value="Alphabets">Alphabets</option>
+                <option value="HighestLowercaseAlphabet">Highest Lowercase Alphabet</option>
+            </select>
+        </div>
+    </div>
+    <script>
+        async function submit() {
+            const data = document.getElementById("apiInput").value;
+            const filters = Array.from(document.getElementById("filterSelect").selectedOptions).map(option => option.value);
+            const final = {
+                apiInput:data, 
+                filters: filters
+            };
+            try{
+                JSON.parse(data);
+                data.style.color = "green";
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(final)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                console.log('Success:', result);
+            }
+            catch (e){
+                data.style.color = "red";
+
+            }
+        }
+    </script>
+</body>
+</html>
